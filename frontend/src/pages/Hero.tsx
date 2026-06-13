@@ -13,6 +13,7 @@ const Hero = () => {
     <div className="flex flex-col items-center gap-6 font-custom md:px-8 py-10 h-screen">
       <div className="flex flex-col gap-2">
         <p className="text-main text-4xl md:text-7xl lg:text-8xl xl:text-9xl uppercase">Emmy Manning</p>
+        <p className="text-center">THIS IS TERRAFORM TEST</p>
         <div className="flex justify-end items-center gap-2">
           <p className="text-main text-xl xl:text-2xl">AI Cloud Engineer ー</p>
           <a href={import.meta.env.VITE_LINKEDIN} target="_blank" rel="noopener noreferrer">
