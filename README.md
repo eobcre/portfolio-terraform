@@ -12,6 +12,7 @@ My personal portfolio website showcasing my projects, skills and professional ba
 - Amazon Route 53
 - React (Vite)
 - Tailwind CSS
+- Terraform
 
 > Note: This project is managed and deployed via Terraform.
 
