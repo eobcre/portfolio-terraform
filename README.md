@@ -13,6 +13,8 @@ My personal portfolio website showcasing my projects, skills and professional ba
 - React (Vite)
 - Tailwind CSS
 
+> Note: This project is managed and deployed via Terraform.
+
 ### 🚀 Features
 
 - Email feature in contact form with Amazon SES.
