@@ -78,12 +78,12 @@ resource "aws_cloudfront_distribution" "portfolio" {
   }
 
   origin {
-  domain_name = var.api_gateway_invoke_url
-  origin_id   = "API-Gateway-Origin"
+    domain_name = var.api_gateway_invoke_url
+    origin_id = "API-Gateway-Origin"
 
   custom_origin_config {
-    http_port              = 80
-    https_port             = 443
+    http_port = 80
+    https_port = 443
     origin_protocol_policy = "https-only"
     origin_ssl_protocols   = ["TLSv1.2"]
   }
@@ -112,28 +112,32 @@ resource "aws_cloudfront_distribution" "portfolio" {
 
   # api gateway
   ordered_cache_behavior {
-    path_pattern           = "/api/*"
-    target_origin_id       = "API-Gateway-Origin"
+    path_pattern = "/api/*"
+    target_origin_id = "API-Gateway-Origin"
     viewer_protocol_policy = "redirect-to-https"
 
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS",
-      "POST",
-      "PUT",
-      "PATCH",
-      "DELETE"
-    ]
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "POST", "PUT"]
 
-    cached_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS"
-    ]
+    cached_methods = ["GET", "HEAD", "OPTIONS"]
 
     cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
+  }
+
+  /////////////////////////////////
+  # Error Pages
+  ////////////////////////////////
+
+  custom_error_response {
+    error_code = 403
+    response_code = 200
+    response_page_path = "/index.html"
+  }
+
+  custom_error_response {
+    error_code = 404
+    response_code = 200
+    response_page_path = "/index.html"
   }
 
   /////////////////////////////////
