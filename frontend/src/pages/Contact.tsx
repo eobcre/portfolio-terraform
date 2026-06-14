@@ -14,6 +14,7 @@ const Contact = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
@@ -28,6 +29,7 @@ const Contact = () => {
 
       if (res.ok) {
         alert("Message sent!!!!");
+        reset();
       } else {
         alert("Error sending message.");
       }
