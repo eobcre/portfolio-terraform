@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 #################################
-# ACM
+# Data Sources
 #################################
 
 # existing acm
@@ -20,6 +20,21 @@ data "aws_acm_certificate" "portfolio" {
   domain = var.domain_name
   statuses = ["ISSUED"]
   most_recent = true
+}
+
+# existing cloudfront distribution
+data "aws_cloudfront_cache_policy" "caching_disabled" {
+  name = "Managed-CachingDisabled"
+}
+
+data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
+  name = "Managed-AllViewerExceptHostHeader"
+}
+
+# route 53 hosted zone
+data "aws_route53_zone" "main" {
+  name = var.domain_name
+  private_zone = false
 }
 
 #################################
@@ -58,16 +73,29 @@ resource "aws_cloudfront_distribution" "portfolio" {
 
   origin {
     domain_name = aws_s3_bucket.portfolio.bucket_regional_domain_name
-    origin_id = "S3-portfolio-origin"
+    origin_id = "S3-Origin"
     origin_access_control_id = aws_cloudfront_origin_access_control.portfolio_oac.id
   }
 
+  origin {
+  domain_name = var.api_gateway_invoke_url
+  origin_id   = "API-Gateway-Origin"
+
+  custom_origin_config {
+    http_port              = 80
+    https_port             = 443
+    origin_protocol_policy = "https-only"
+    origin_ssl_protocols   = ["TLSv1.2"]
+  }
+}
+
   /////////////////////////////////
-  # Cache Behavior
+  # Cache Behaviors
   ////////////////////////////////
 
+  # default
   default_cache_behavior {
-    target_origin_id = "S3-portfolio-origin"
+    target_origin_id = "S3-Origin"
     viewer_protocol_policy = "redirect-to-https"
 
     allowed_methods = ["GET", "HEAD"]
@@ -80,6 +108,32 @@ resource "aws_cloudfront_distribution" "portfolio" {
         forward = "none"
       }
     }
+  }
+
+  # api gateway
+  ordered_cache_behavior {
+    path_pattern           = "/api/*"
+    target_origin_id       = "API-Gateway-Origin"
+    viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE"
+    ]
+
+    cached_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS"
+    ]
+
+    cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
   }
 
   /////////////////////////////////
@@ -138,15 +192,6 @@ resource "aws_s3_bucket_policy" "portfolio_policy" {
       }
     ]
   })
-}
-
-#################################
-# Route 53 - Hosted Zone
-#################################
-
-data "aws_route53_zone" "main" {
-  name = var.domain_name
-  private_zone = false
 }
 
 #################################
