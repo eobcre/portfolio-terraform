@@ -21,7 +21,7 @@ const Contact = () => {
     // console.log("data:", data);
 
     try {
-      const res = await fetch(`/api/emails`, {
+      const res = await fetch(`/api/email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
