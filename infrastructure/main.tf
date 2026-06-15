@@ -237,3 +237,54 @@ resource "aws_apigatewayv2_stage" "default" {
   name        = "$default"
   auto_deploy = true
 }
+
+#################################
+# Lambda - email API
+#################################
+
+# create
+resource "aws_lambda_function" "email_api" {
+  function_name = "email-api"
+  role = aws_iam_role.lambda_exec.arn
+  runtime = "python3.14"
+  handler = "lambda_function.lambda_handler"
+
+  filename = "../backend/email-api.zip"
+  source_code_hash = filebase64sha256("../backend/email-api.zip")
+
+  # environment variables
+  environment {
+    variables = {
+      FROM_EMAIL = var.from_email
+      TO_EMAIL = var.to_email
+    }
+  }
+}
+
+#################################
+# IAM Role for Lambda
+#################################
+
+# allow lambda to assume this role
+resource "aws_iam_role" "lambda_exec" {
+  name = "email-api-lambda-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# cloudWatch logs permissions for lambda
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
