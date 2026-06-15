@@ -16,3 +16,11 @@ variable "domain_name" {
 variable "api_gateway_invoke_url" {
   type = string
 }
+
+variable "from_email" {
+  type = string
+}
+
+variable "to_email" {
+  type = string
+}
