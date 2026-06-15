@@ -29,3 +29,9 @@ Lambda function code is available in a separate repository: [Email API](https://
 ### 💻 Demo
 
 [View Demo](https://e-manning.dev/)
+
+### 📚 References
+- [Terraform Documentation](https://developer.hashicorp.com/terraform/language)
+- [Terraform Documentation AWS - CloudFront Distribution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution.html)
+- [Terraform Documentation AWS - API Gateway](https://registry.terraform.io/providers/hashicorp/aws/3.64.0/docs/resources/apigatewayv2_api)
+- [Terraform Documentation - replace Function](https://developer.hashicorp.com/terraform/language/functions/replace)
