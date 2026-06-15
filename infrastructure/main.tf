@@ -78,8 +78,8 @@ resource "aws_cloudfront_distribution" "portfolio" {
   }
 
   origin {
-    domain_name = var.api_gateway_invoke_url
-    origin_id = "API-Gateway-Origin"
+    domain_name = replace(aws_apigatewayv2_api.email_api.api_endpoint, "https://", "")
+    origin_id   = "API-Gateway-Origin"
 
   custom_origin_config {
     http_port = 80
@@ -116,7 +116,7 @@ resource "aws_cloudfront_distribution" "portfolio" {
     target_origin_id = "API-Gateway-Origin"
     viewer_protocol_policy = "redirect-to-https"
 
-    allowed_methods = ["GET", "HEAD", "OPTIONS", "POST", "PUT"]
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"]
 
     cached_methods = ["GET", "HEAD", "OPTIONS"]
 
@@ -212,4 +212,28 @@ resource "aws_route53_record" "root" {
     zone_id = aws_cloudfront_distribution.portfolio.hosted_zone_id
     evaluate_target_health = false
   }
+}
+
+#################################
+# API Gateway - HTTP API
+#################################
+
+# create
+resource "aws_apigatewayv2_api" "email_api" {
+  name = "email-api"
+  protocol_type = "HTTP"
+
+  # cors
+  cors_configuration {
+    allow_origins = ["https://${var.domain_name}"]
+    allow_methods = ["POST", "OPTIONS"]
+    allow_headers = ["content-type"]
+  }
+}
+
+# default stage - no stage name in url
+resource "aws_apigatewayv2_stage" "default" {
+  api_id      = aws_apigatewayv2_api.email_api.id
+  name        = "$default"
+  auto_deploy = true
 }
