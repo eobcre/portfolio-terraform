@@ -9,6 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,6 +33,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ID }}:role/${{ secrets.ROLE_NAME}}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload to S3
