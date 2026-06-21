@@ -1,8 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = var.state_bucket_name
     key    = "portfolio/terraform.tfstate"
-    region = var.aws_region
   }
 
   required_providers {
