@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    key    = "portfolio/terraform.tfstate"
+    key = "portfolio/terraform.tfstate"
   }
 
   required_providers {
