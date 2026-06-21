@@ -14,6 +14,7 @@ jobs:
 
     # terraform environment variables
     env:
+      TF_VAR_aws_region: ${{ secrets.TF_VAR_AWS_REGION }}
       TF_VAR_bucket_name: ${{ secrets.TF_VAR_BUCKET_NAME }}
       TF_VAR_domain_name: ${{ secrets.TF_VAR_DOMAIN_NAME }}
       TF_VAR_api_gateway_invoke_url: ${{ secrets.TF_VAR_API_GATEWAY_INVOKE_URL }}
