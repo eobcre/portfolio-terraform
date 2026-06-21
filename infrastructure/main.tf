@@ -4,6 +4,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+
+      archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.7"
+    }
   }
 }
 
@@ -29,6 +34,13 @@ data "aws_cloudfront_cache_policy" "caching_disabled" {
 
 data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
   name = "Managed-AllViewerExceptHostHeader"
+}
+
+# archive file
+data "archive_file" "email_api_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/../backend"
+  output_path = "${path.module}/email-api.zip"
 }
 
 #################################
@@ -227,8 +239,8 @@ resource "aws_lambda_function" "email_api" {
   runtime       = "python3.14"
   handler       = "lambda_function.lambda_handler"
 
-  filename         = "../backend/email-api.zip"
-  source_code_hash = filebase64sha256("../backend/email-api.zip")
+  filename         = data.archive_file.email_api_zip.output_path
+  source_code_hash = data.archive_file.email_api_zip.output_base64sha256
 
   # environment variables
   environment {
