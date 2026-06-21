@@ -8,6 +8,11 @@ variable "bucket_name" {
   type        = string
 }
 
+variable "state_bucket_name" {
+  description = "tfstate bucket name"
+  type        = string
+}
+
 variable "domain_name" {
   description = "domain name"
   type        = string
