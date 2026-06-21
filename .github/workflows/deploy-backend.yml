@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "infrastructure/**"
-      - "deploy-backend.yml"
+      - ".github/workflows/deploy-backend.yml"
 
 jobs:
   terraform:
