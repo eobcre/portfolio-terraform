@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - "infrastructure/**"
+      - "deploy-backend.yml"
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
 
+    # terraform environment variables
     env:
       TF_VAR_bucket_name: ${{ secrets.TF_VAR_BUCKET_NAME }}
       TF_VAR_domain_name: ${{ secrets.TF_VAR_DOMAIN_NAME }}
