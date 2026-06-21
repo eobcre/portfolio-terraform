@@ -17,8 +17,8 @@ provider "aws" {
 
 # existing acm
 data "aws_acm_certificate" "portfolio" {
-  domain = var.domain_name
-  statuses = ["ISSUED"]
+  domain      = var.domain_name
+  statuses    = ["ISSUED"]
   most_recent = true
 }
 
@@ -44,11 +44,11 @@ resource "aws_s3_bucket" "portfolio" {
 #################################
 
 resource "aws_cloudfront_origin_access_control" "portfolio_oac" {
-  name = "portfolio-oac"
-  description = "OAC for portfolio S3 bucket"
+  name                              = "portfolio-oac"
+  description                       = "OAC for portfolio S3 bucket"
   origin_access_control_origin_type = "s3"
-  signing_behavior = "always"
-  signing_protocol = "sigv4"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
 
 #################################
@@ -56,18 +56,18 @@ resource "aws_cloudfront_origin_access_control" "portfolio_oac" {
 #################################
 
 resource "aws_cloudfront_distribution" "portfolio" {
-  enabled = true
+  enabled             = true
   default_root_object = "index.html"
-  comment = "for terraform-portfolio"
-  price_class = "PriceClass_100"
+  comment             = "for terraform-portfolio"
+  price_class         = "PriceClass_100"
 
   /////////////////////////////////
   # Origin
   ////////////////////////////////
 
   origin {
-    domain_name = aws_s3_bucket.portfolio.bucket_regional_domain_name
-    origin_id = "S3-Origin"
+    domain_name              = aws_s3_bucket.portfolio.bucket_regional_domain_name
+    origin_id                = "S3-Origin"
     origin_access_control_id = aws_cloudfront_origin_access_control.portfolio_oac.id
   }
 
@@ -75,13 +75,13 @@ resource "aws_cloudfront_distribution" "portfolio" {
     domain_name = replace(aws_apigatewayv2_api.email_api.api_endpoint, "https://", "")
     origin_id   = "API-Gateway-Origin"
 
-  custom_origin_config {
-    http_port = 80
-    https_port = 443
-    origin_protocol_policy = "https-only"
-    origin_ssl_protocols   = ["TLSv1.2"]
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
   }
-}
 
   /////////////////////////////////
   # Cache Behaviors
@@ -89,11 +89,11 @@ resource "aws_cloudfront_distribution" "portfolio" {
 
   # default
   default_cache_behavior {
-    target_origin_id = "S3-Origin"
+    target_origin_id       = "S3-Origin"
     viewer_protocol_policy = "redirect-to-https"
 
     allowed_methods = ["GET", "HEAD"]
-    cached_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
 
     forwarded_values {
       query_string = false
@@ -106,15 +106,15 @@ resource "aws_cloudfront_distribution" "portfolio" {
 
   # api gateway
   ordered_cache_behavior {
-    path_pattern = "/api/*"
-    target_origin_id = "API-Gateway-Origin"
+    path_pattern           = "/api/*"
+    target_origin_id       = "API-Gateway-Origin"
     viewer_protocol_policy = "redirect-to-https"
 
     allowed_methods = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"]
 
     cached_methods = ["GET", "HEAD", "OPTIONS"]
 
-    cache_policy_id = data.aws_cloudfront_cache_policy.caching_disabled.id
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_disabled.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
   }
 
@@ -123,14 +123,14 @@ resource "aws_cloudfront_distribution" "portfolio" {
   ////////////////////////////////
 
   custom_error_response {
-    error_code = 403
-    response_code = 200
+    error_code         = 403
+    response_code      = 200
     response_page_path = "/index.html"
   }
 
   custom_error_response {
-    error_code = 404
-    response_code = 200
+    error_code         = 404
+    response_code      = 200
     response_page_path = "/index.html"
   }
 
@@ -151,9 +151,9 @@ resource "aws_cloudfront_distribution" "portfolio" {
   aliases = [var.domain_name]
 
   viewer_certificate {
-  acm_certificate_arn = data.aws_acm_certificate.portfolio.arn
-  ssl_support_method = "sni-only"
-  minimum_protocol_version = "TLSv1.2_2021"
+    acm_certificate_arn      = data.aws_acm_certificate.portfolio.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 }
 
@@ -198,7 +198,7 @@ resource "aws_s3_bucket_policy" "portfolio_policy" {
 
 # create
 resource "aws_apigatewayv2_api" "email_api" {
-  name = "email-api"
+  name          = "email-api"
   protocol_type = "HTTP"
 
   # cors
@@ -223,18 +223,18 @@ resource "aws_apigatewayv2_stage" "default" {
 # create
 resource "aws_lambda_function" "email_api" {
   function_name = "email-api"
-  role = aws_iam_role.lambda_exec.arn
-  runtime = "python3.14"
-  handler = "lambda_function.lambda_handler"
+  role          = aws_iam_role.lambda_exec.arn
+  runtime       = "python3.14"
+  handler       = "lambda_function.lambda_handler"
 
-  filename = "../backend/email-api.zip"
+  filename         = "../backend/email-api.zip"
   source_code_hash = filebase64sha256("../backend/email-api.zip")
 
   # environment variables
   environment {
     variables = {
       FROM_EMAIL = var.from_email
-      TO_EMAIL = var.to_email
+      TO_EMAIL   = var.to_email
     }
   }
 }
