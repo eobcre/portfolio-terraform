@@ -16,7 +16,7 @@ jobs:
     env:
       TF_VAR_aws_region: ${{ secrets.TF_VAR_AWS_REGION }}
       TF_VAR_bucket_name: ${{ secrets.TF_VAR_BUCKET_NAME }}
-      TF_VAR_state_bucket_name: ${{ secrets.TF_VAR_STATE_BUCKET_NAME}}
+      TF_VAR_state_bucket_name: ${{ secrets.TF_VAR_STATE_BUCKET_NAME }}
       TF_VAR_domain_name: ${{ secrets.TF_VAR_DOMAIN_NAME }}
       TF_VAR_api_gateway_invoke_url: ${{ secrets.TF_VAR_API_GATEWAY_INVOKE_URL }}
       TF_VAR_from_email: ${{ secrets.TF_VAR_FROM_EMAIL }}
@@ -44,7 +44,10 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform init
+        run: |
+         terraform init \
+            -backend-config="bucket=${{ secrets.STATE_BUCKET_NAME }}" \
+            -backend-config="region=${{ secrets.AWS_REGION }}"
 
       - name: Terraform Format Check
         run: terraform fmt -check
