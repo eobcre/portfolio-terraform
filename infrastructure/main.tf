@@ -31,12 +31,6 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
   name = "Managed-AllViewerExceptHostHeader"
 }
 
-# route 53 hosted zone
-data "aws_route53_zone" "main" {
-  name = var.domain_name
-  private_zone = false
-}
-
 #################################
 # S3 Bucket
 #################################
@@ -199,22 +193,6 @@ resource "aws_s3_bucket_policy" "portfolio_policy" {
 }
 
 #################################
-# Route 53 - Record
-#################################
-
-resource "aws_route53_record" "root" {
-  zone_id = data.aws_route53_zone.main.zone_id
-  name = var.domain_name
-  type = "A"
-
-  alias {
-    name = aws_cloudfront_distribution.portfolio.domain_name
-    zone_id = aws_cloudfront_distribution.portfolio.hosted_zone_id
-    evaluate_target_health = false
-  }
-}
-
-#################################
 # API Gateway - HTTP API
 #################################
 
@@ -287,4 +265,14 @@ resource "aws_iam_role" "lambda_exec" {
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# api gateway -> lambda
+resource "aws_lambda_permission" "allow_api_gateway" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.email_api.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_apigatewayv2_api.email_api.execution_arn}/*/*"
 }
