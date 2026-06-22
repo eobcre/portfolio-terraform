@@ -36,7 +36,7 @@ const Contact = () => {
 
       if (res.ok) {
         setPopupTitle("Message sent!");
-        setPopupMessage("Thank you. Your email has been sent successfully.");
+        setPopupMessage("Thank you. Your message has been sent successfully.");
         setShowPopup(true);
         reset();
       } else {
