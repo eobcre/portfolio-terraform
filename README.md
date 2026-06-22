@@ -10,9 +10,11 @@ Built and deployed a full-stack portfolio application using React, AWS S3, Cloud
 - Amazon CloudFront
 - Amaon S3
 - Amazon Route 53
+- IAM
 - React (Vite)
 - Tailwind CSS
 - Terraform
+- GitHub Actions
 
 > Note: This project is managed and deployed via Terraform.
 
