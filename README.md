@@ -25,9 +25,6 @@ Built and deployed a full-stack portfolio application using React, AWS S3, Cloud
 - Responsive UI.
 - Includes sections for About, Experience, Work and Contact.
 
-### 🔗 Related Projects
-Lambda function code is available in a separate repository: [Email API](https://github.com/eobcre/portfolio-backend-serverless)
-
 ### 💻 Demo
 
 [View Demo](https://e-manning.dev/)
