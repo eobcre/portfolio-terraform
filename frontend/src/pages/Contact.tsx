@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Icon } from "@iconify/react";
+import Popup from "../components/Popup";
 import Image from "../assets/bg-image-04.png";
 
 type FormValues = {
@@ -17,6 +19,11 @@ const Contact = () => {
     reset,
   } = useForm<FormValues>();
 
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupTitle, setPopupTitle] = useState("");
+  const [popupMessage, setPopupMessage] = useState("");
+
+  // send form
   const onSubmit = async (data: FormValues) => {
     // console.log("data:", data);
 
@@ -28,14 +35,20 @@ const Contact = () => {
       });
 
       if (res.ok) {
-        alert("Message sent!!!!");
+        setPopupTitle("Message sent!");
+        setPopupMessage("Thank you. Your email has been sent successfully.");
+        setShowPopup(true);
         reset();
       } else {
-        alert("Error sending message.");
+        setPopupTitle("Error");
+        setPopupMessage("Error sending a message.");
+        setShowPopup(true);
       }
     } catch (err) {
       console.error(err);
-      alert("Network error.");
+      setPopupTitle("Error");
+      setPopupMessage("Network Error...");
+      setShowPopup(true);
     }
   };
 
@@ -102,6 +115,8 @@ const Contact = () => {
             </button>
           </div>
         </form>
+
+        {showPopup && <Popup popupTitle={popupTitle} popupMessage={popupMessage} onClick={() => setShowPopup(false)} />}
       </div>
     </div>
   );
