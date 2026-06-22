@@ -209,10 +209,17 @@ resource "aws_s3_bucket_policy" "portfolio_policy" {
 }
 
 #################################
-# API Gateway - HTTP API
+# email API backend
+
+# API Gateway
+# Lambda
+# IAM Role
+# Permission
+# Integration
+# Route
 #################################
 
-# create
+# create http api
 resource "aws_apigatewayv2_api" "email_api" {
   name          = "email-api"
   protocol_type = "HTTP"
@@ -225,18 +232,14 @@ resource "aws_apigatewayv2_api" "email_api" {
   }
 }
 
-# default stage - no stage name in url
+# create default stage - no stage name in url
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.email_api.id
   name        = "$default"
   auto_deploy = true
 }
 
-#################################
-# Lambda - email API
-#################################
-
-# create
+# create lambda function
 resource "aws_lambda_function" "email_api" {
   function_name = "email-api"
   role          = aws_iam_role.lambda_exec.arn
@@ -255,11 +258,7 @@ resource "aws_lambda_function" "email_api" {
   }
 }
 
-#################################
-# IAM Role for Lambda
-#################################
-
-# allow lambda to assume this role
+# create iam role for lambda execution
 resource "aws_iam_role" "lambda_exec" {
   name = "email-api-lambda-role"
 
@@ -277,36 +276,13 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-# cloudWatch logs permissions for lambda
+# cloudWatch logs permission for lambda role
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# api gateway -> lambda
-resource "aws_lambda_permission" "allow_api_gateway" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.email_api.function_name
-  principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${aws_apigatewayv2_api.email_api.execution_arn}/*/*"
-}
-
-resource "aws_apigatewayv2_integration" "email_lambda" {
-  api_id                 = aws_apigatewayv2_api.email_api.id
-  integration_type       = "AWS_PROXY"
-  integration_uri        = aws_lambda_function.email_api.invoke_arn
-  integration_method     = "POST"
-  payload_format_version = "2.0"
-}
-
-resource "aws_apigatewayv2_route" "email_route" {
-  api_id    = aws_apigatewayv2_api.email_api.id
-  route_key = "POST /api/email"
-  target    = "integrations/${aws_apigatewayv2_integration.email_lambda.id}"
-}
-
+# allow lambda to send emails using ses
 resource "aws_iam_role_policy" "lambda_ses_send_email" {
   name = "email-api-ses-send-email-policy"
   role = aws_iam_role.lambda_exec.id
@@ -324,4 +300,30 @@ resource "aws_iam_role_policy" "lambda_ses_send_email" {
       }
     ]
   })
+}
+
+# allow api gateway to invoke lambda
+resource "aws_lambda_permission" "allow_api_gateway" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.email_api.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_apigatewayv2_api.email_api.execution_arn}/*/*"
+}
+
+# connect api gateway to lambda
+resource "aws_apigatewayv2_integration" "email_lambda" {
+  api_id                 = aws_apigatewayv2_api.email_api.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.email_api.invoke_arn
+  integration_method     = "POST"
+  payload_format_version = "2.0"
+}
+
+# create post /api/email endpoint and route requests to lambda
+resource "aws_apigatewayv2_route" "email_route" {
+  api_id    = aws_apigatewayv2_api.email_api.id
+  route_key = "POST /api/email"
+  target    = "integrations/${aws_apigatewayv2_integration.email_lambda.id}"
 }
