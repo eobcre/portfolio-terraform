@@ -16,7 +16,7 @@ Built and deployed a full-stack portfolio application using React, AWS S3, Cloud
 - Terraform
 - GitHub Actions
 
-> Note: This project is managed and deployed via Terraform.
+> Note: This project is managed and deployed via Terraform and GitHub Actions.
 
 ### 🚀 Features
 
