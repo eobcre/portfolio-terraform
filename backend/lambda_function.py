@@ -5,9 +5,6 @@ import boto3
 ses = boto3.client("ses")
 
 def lambda_handler(event, context):
-    print("Lambda: START")
-    print("Lambda event", event)
-
     try:
         body = json.loads(event.get("body") or "{}")
 
@@ -21,8 +18,6 @@ def lambda_handler(event, context):
                 "ok": False,
                 "error": "name, email, message are required."
             })
-
-        print("SES: START")
 
         # ses
         ses.send_email(
@@ -54,5 +49,3 @@ def response(status_code, body):
         "statusCode": status_code,
         "body": json.dumps(body)
     }
-
-print("SES: SENT")
