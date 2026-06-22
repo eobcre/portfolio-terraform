@@ -1,6 +1,6 @@
 # My Portfolio
 
-My personal portfolio website showcasing my projects, skills and professional background.
+Built and deployed a full-stack portfolio application using React, AWS S3, CloudFront, API Gateway, Lambda, and SES. Managed infrastructure with Terraform, including IAM roles, Lambda permissions and CloudFront distribution. Automated infrastructure validation and deployment workflows using GitHub Actions.
 
 ### 🛠 Tech Stack
 
