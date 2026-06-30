@@ -75,9 +75,11 @@ const Work = () => {
               </div>
               {/* git link */}
               <div className="flex items-center gap-3">
-                <a href={item.link} target="_blank" rel="noopener noreferrer">
-                  <Icon icon="akar-icons:link-out" className="relative z-10 cursor-pointer hover:opacity-60 transition-all duration-300 ease-out w-7 h-7" />
-                </a>
+                {index !== 0 && (
+                  <a href={item.link} target="_blank" rel="noopener noreferrer">
+                    <Icon icon="akar-icons:link-out" className="relative z-10 cursor-pointer hover:opacity-60 transition-all duration-300 ease-out w-7 h-7" />
+                  </a>
+                )}
                 <a href={item.path} target="_blank" rel="noopener noreferrer">
                   <Icon icon="proicons:github" className="relative z-10 cursor-pointer hover:opacity-60 transition-all duration-300 ease-out w-8 h-8" />
                 </a>
