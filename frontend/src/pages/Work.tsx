@@ -89,7 +89,7 @@ const Work = () => {
             <div className="relative z-10 py-10">
               <p className="leading-loose">{item.desc}</p>
             </div>
-            {/* portfolio image */}
+            {/* project image */}
             {index !== 0 && (
               <div className="pb-10">
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className="cursor-default">
