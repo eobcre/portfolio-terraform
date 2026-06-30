@@ -93,7 +93,7 @@ const Work = () => {
             {index !== 0 && (
               <div className="pb-10">
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className="cursor-default">
-                  <img src={item.image} alt="Image" className="cursor-pointer w-full" />
+                  <img src={item.image} alt="Image" className="rounded-lg cursor-pointer w-full" />
                 </a>
               </div>
             )}
