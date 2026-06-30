@@ -35,7 +35,7 @@ const Work = () => {
     },
     {
       id: 4,
-      title: "AI Caption Studio",
+      title: "AI-Powered Caption Studio",
       number: "04",
       link: import.meta.env.VITE_STUDIO_URL,
       path: import.meta.env.VITE_STUDIO_REPO,
