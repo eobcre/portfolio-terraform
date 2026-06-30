@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react";
 import Image from "../assets/bg-image-03.png";
 import RagImage from "../assets/rag.png";
 import MlImage from "../assets/ml.png";
+import StudioImage from "../assets/studio.png";
 import Video from "../assets/demo.mov";
 
 const Work = () => {
@@ -31,6 +32,15 @@ const Work = () => {
       path: import.meta.env.VITE_ML_REPO,
       desc: `A house price prediction web application that provides real-time house price predictions based on user inputs, using a ML model deployed on AWS serverless infrastructure.`,
       image: MlImage,
+    },
+    {
+      id: 4,
+      title: "AI Caption Studio",
+      number: "04",
+      link: import.meta.env.VITE_STUDIO_URL,
+      path: import.meta.env.VITE_STUDIO_REPO,
+      desc: `AI Caption Studio is a web application that allows users to upload images and automatically generate AI-powered captions and hashtags.`,
+      image: StudioImage,
     },
   ];
 
