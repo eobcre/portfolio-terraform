@@ -18,6 +18,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      # frontend environment variables
+      - name: Create .env
+        run: |
+          echo "VITE_RAG_URL=${{ secrets.VITE_RAG_URL }}" >> frontend/.env
+          echo "VITE_RAG_REPO=${{ secrets.VITE_RAG_REPO }}" >> frontend/.env
+          echo "VITE_ML_URL=${{ secrets.VITE_ML_URL }}" >> frontend/.env
+          echo "VITE_ML_REPO=${{ secrets.VITE_ML_REPO }}" >> frontend/.env
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
